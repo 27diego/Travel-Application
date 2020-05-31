@@ -1,0 +1,40 @@
+version: '3.6'
+
+services:
+  full_travel:
+    container_name: full_travel
+    build: ./
+    command: yarn server
+    working_dir: /usr/src/TravelApp
+    links:
+      - postgres
+      - redis
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./:/usr/src/TravelApp
+
+  #PostgreSQL
+  postgres:
+    image: postgres:latest
+    volumes:
+      - 'travel-db:/var/lib/postgresql/data'
+    environment:
+      POSTGRES_USER: Diego
+      POSTGRES_PASSWORD: School
+      POSTGRES_DB: travel-db
+      POSTGRES_HOST: postgres
+    ports:
+      - '5432:5432'
+
+  redis:
+    build: ./src/Server/Model
+    container_name: redis
+    volumes:
+      - 'travel-session:/data'
+    ports:
+      - '6379:6379'
+
+volumes:
+  travel-db:
+  travel-session:
