@@ -16,7 +16,7 @@ services:
 
   #PostgreSQL
   postgres:
-    image: postgres:latest
+    build: ./src/Server/Model
     volumes:
       - 'travel-db:/var/lib/postgresql/data'
     environment:
@@ -28,7 +28,7 @@ services:
       - '5432:5432'
 
   redis:
-    build: ./src/Server/Model
+    image: redis:latest
     container_name: redis
     volumes:
       - 'travel-session:/data'
