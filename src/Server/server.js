@@ -6,7 +6,9 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import config from '../../webpack.config';
 import redis from 'redis';
 import knex from 'knex';
-import { Model } from 'objection';
+import expressQL from 'express-graphql';
+import graphQLSchema from './GraphQL/schema';
+import graphQLResolver from './GraphQL/resolvers';
 
 const db = knex({
   client: 'pg',
@@ -17,8 +19,6 @@ const db = knex({
     host: process.env.POSTGRES_HOST,
   },
 });
-
-Model.knex(knex);
 
 export const redisClient = redis.createClient('redis://redis:6379');
 const compiler = webpack(config);
@@ -49,6 +49,14 @@ server.get('/API', (req, res) => {
   res.json('It works with reloading now!!');
   console.log;
 });
+
+server.use(
+  '/graphql',
+  expressQL({
+    schema: graphQLSchema,
+    rootValue: graphQLResolver,
+  }),
+);
 
 server.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
